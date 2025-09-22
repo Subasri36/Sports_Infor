@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportsTalent AI - Advanced Assessment Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        secondary: '#f59e0b',
+                        accent: '#10b981',
+                        danger: '#ef4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="gradient-bg text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold">🏆 SportsTalent AI</div>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <button onclick="showSection('dashboard')" class="hover:text-secondary transition-colors">Dashboard</button>
+                    <button onclick="showSection('registration')" class="hover:text-secondary transition-colors">Registration</button>
+                    <button onclick="showSection('assessment')" class="hover:text-secondary transition-colors">Assessment</button>
+                    <button onclick="showSection('events')" class="hover:text-secondary transition-colors">Events</button>
+                    <button onclick="showSection('athletes')" class="hover:text-secondary transition-colors">Athletes</button>
+                </div>
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-white">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-blue-800 px-4 py-2">
+            <button onclick="showSection('dashboard')" class="block w-full text-left py-2 hover:text-secondary">Dashboard</button>
+            <button onclick="showSection('registration')" class="block w-full text-left py-2 hover:text-secondary">Registration</button>
+            <button onclick="showSection('assessment')" class="block w-full text-left py-2 hover:text-secondary">Assessment</button>
+            <button onclick="showSection('events')" class="block w-full text-left py-2 hover:text-secondary">Events</button>
+            <button onclick="showSection('athletes')" class="block w-full text-left py-2 hover:text-secondary">Athletes</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="section">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Sports Talent Dashboard</h1>
+                <p class="text-gray-600">Comprehensive athlete management and assessment platform</p>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-lg p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Athletes</p>
+                            <p id="totalAthletes" class="text-3xl font-bold text-primary">0</p>
+                        </div>
+                        <div class="text-4xl">👥</div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Assessments</p>
+                            <p id="totalAssessments" class="text-3xl font-bold text-accent">0</p>
+                        </div>
+                        <div class="text-4xl">📊</div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Avg Score</p>
+                            <p id="avgScore" class="text-3xl font-bold text-secondary">0</p>
+                        </div>
+                        <div class="text-4xl">🎯</div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Active Sports</p>
+                            <p id="activeSports" class="text-3xl font-bold text-danger">0</p>
+                        </div>
+                        <div class="text-4xl">⚽</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Athletes -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Recent Athletes</h3>
+                    <button onclick="showSection('athletes')" class="text-primary hover:text-blue-700 font-medium">View All</button>
+                </div>
+                <div id="recentAthletes" class="space-y-4">
+                    <div class="text-center text-gray-500 py-8">
+                        <div class="text-4xl mb-2">📝</div>
+                        <p>No athletes registered yet. Start by adding new athletes!</p>
+                        <button onclick="showSection('registration')" class="mt-4 bg-primary text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            Add First Athlete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Section -->
+        <div id="registration" class="section hidden">
+            <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Athlete Registration Form</h2>
+                <form id="athleteForm" onsubmit="handleRegistration(event)" class="space-y-6">
+                    <!-- Personal Information -->
+                    <div class="border-b pb-6">
+                        <h3 class="text-lg font-semibold mb-4 text-primary">Personal Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                                <input type="text" name="fullName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                                <input type="email" name="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                <input type="tel" name="phone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Age *</label>
+                                <input type="number" name="age" required min="5" max="50" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                                <select name="gender" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                                <input type="date" name="dateOfBirth" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sports Information -->
+                    <div class="border-b pb-6">
+                        <h3 class="text-lg font-semibold mb-4 text-primary">Sports Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Primary Sport *</label>
+                                <select name="primarySport" required onchange="updateSportSpecific(this.value)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="">Select Sport</option>
+                                    <option value="football">Football ⚽</option>
+                                    <option value="basketball">Basketball 🏀</option>
+                                    <option value="tennis">Tennis 🎾</option>
+                                    <option value="swimming">Swimming 🏊</option>
+                                    <option value="athletics">Athletics 🏃</option>
+                                    <option value="cricket">Cricket 🏏</option>
+                                    <option value="badminton">Badminton 🏸</option>
+                                    <option value="volleyball">Volleyball 🏐</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Experience Level</label>
+                                <select name="experienceLevel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="beginner">Beginner (0-1 years)</option>
+                                    <option value="intermediate">Intermediate (2-5 years)</option>
+                                    <option value="advanced">Advanced (5+ years)</option>
+                                    <option value="professional">Professional</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Daily Practice Hours</label>
+                                <input type="number" name="practiceHours" step="0.5" min="0" max="12" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Physical Metrics -->
+                    <div class="border-b pb-6">
+                        <h3 class="text-lg font-semibold mb-4 text-primary">Physical Assessment</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Height (cm) *</label>
+                                <input type="number" name="height" required min="100" max="250" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Weight (kg) *</label>
+                                <input type="number" name="weight" required min="20" max="200" step="0.1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Blood Pressure</label>
+                                <input type="text" name="bloodPressure" placeholder="120/80" pattern="[0-9]{2,3}/[0-9]{2,3}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Breathing Rate (per min)</label>
+                                <input type="number" name="breathingRate" min="10" max="40" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fitness Metrics -->
+                    <div class="border-b pb-6">
+                        <h3 class="text-lg font-semibold mb-4 text-primary">Fitness Assessment</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Max Pushups</label>
+                                <input type="number" name="maxPushups" min="0" max="200" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Hydration Level</label>
+                                <select name="hydrationLevel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="">Select Level</option>
+                                    <option value="excellent">💧 Excellent (Clear)</option>
+                                    <option value="good">🟡 Good (Light Yellow)</option>
+                                    <option value="fair">🟠 Fair (Yellow)</option>
+                                    <option value="poor">🔴 Poor (Dark Yellow)</option>
+                                    <option value="dehydrated">⚫ Dehydrated (Dark)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Overall Fitness Level</label>
+                                <select name="fitnessLevel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="">Select Level</option>
+                                    <option value="poor">Poor</option>
+                                    <option value="fair">Fair</option>
+                                    <option value="good">Good</option>
+                                    <option value="excellent">Excellent</option>
+                                    <option value="elite">Elite</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sport-Specific Fields -->
+                    <div id="sportSpecificFields" class="border-b pb-6 hidden">
+                        <h3 class="text-lg font-semibold mb-4 text-primary">Sport-Specific Assessment</h3>
+                        <div id="sportSpecificContent" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Dynamic content based on sport selection -->
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4 text-primary">Additional Information</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Goals & Aspirations</label>
+                                <textarea name="goals" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Describe your athletic goals and aspirations..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Previous Injuries</label>
+                                <textarea name="injuries" rows="2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="List any previous injuries or medical conditions..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                        <button type="submit" class="flex-1 bg-primary text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                            Register Athlete & Save to Database
+                        </button>
+                        <button type="button" onclick="resetForm()" class="flex-1 bg-gray-500 text-white py-3 px-6 rounded-lg hover:bg-gray-600 transition-colors font-semibold">
+                            Reset Form
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Athletes Management Section -->
+        <div id="athletes" class="section hidden">
+            <div class="mb-8">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Athletes Database</h2>
+                        <p class="text-gray-600">Manage and view all registered athletes</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <input type="text" id="searchAthletes" placeholder="Search athletes..." class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" onkeyup="filterAthletes()">
+                        <button onclick="showSection('registration')" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            Add New Athlete
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Athletes Grid -->
+            <div id="athletesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Athletes will be populated here -->
+            </div>
+
+            <!-- No Athletes Message -->
+            <div id="noAthletes" class="text-center py-12">
+                <div class="text-6xl mb-4">🏃‍♂️</div>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">No Athletes Found</h3>
+                <p class="text-gray-500 mb-6">Start building your sports talent database by registering athletes</p>
+                <button onclick="showSection('registration')" class="bg-primary text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                    Register First Athlete
+                </button>
+            </div>
+        </div>
+
+        <!-- Assessment Section -->
+        <div id="assessment" class="section hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- AI Video Analysis -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <span class="text-2xl mr-2">🎥</span>
+                        AI Video Analysis
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                            <div class="text-4xl mb-4">📹</div>
+                            <p class="text-gray-600 mb-4">Upload technique video for AI analysis</p>
+                            <input type="file" id="videoUpload" accept="video/*" class="hidden" onchange="handleVideoUpload(event)">
+                            <button onclick="document.getElementById('videoUpload').click()" class="bg-secondary text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors">
+                                Choose Video File
+                            </button>
+                        </div>
+                        
+                        <div id="videoAnalysisResults" class="hidden space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-blue-800 mb-2">🤖 AI Analysis Results</h4>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span>Technique Score:</span>
+                                        <span id="techniqueScore" class="font-semibold text-accent">--/100</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Posture Analysis:</span>
+                                        <span id="postureAnalysis" class="font-semibold text-accent">--</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Movement Efficiency:</span>
+                                        <span id="movementEfficiency" class="font-semibold text-secondary">--</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Potential Rating:</span>
+                                        <span id="potentialRating" class="font-semibold text-primary">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-green-800 mb-2">💡 AI Recommendations</h4>
+                                <ul id="aiRecommendations" class="text-sm space-y-1 text-green-700">
+                                    <!-- Recommendations will be populated here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comprehensive Sports Questionnaire -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <span class="text-2xl mr-2">🎮</span>
+                        Comprehensive Sports Assessment Quiz
+                    </h3>
+                    
+                    <!-- Quiz Progress -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-medium text-gray-600">Progress</span>
+                            <span id="quizProgress" class="text-sm font-medium text-primary">0/20</span>
+                        </div>
+                        <div class="bg-gray-200 rounded-full h-2">
+                            <div id="progressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div id="quiz" class="space-y-4">
+                        <!-- Question 1 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="1">
+                            <p class="font-semibold mb-3">1. What's the ideal recovery time between intense training sessions?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q1" value="correct" class="mr-3">
+                                    <span>24-48 hours</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q1" value="wrong" class="mr-3">
+                                    <span>12-24 hours</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q1" value="wrong" class="mr-3">
+                                    <span>72+ hours</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="2">
+                            <p class="font-semibold mb-3">2. Which hydration indicator shows optimal fluid levels?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q2" value="correct" class="mr-3">
+                                    <span>💧 Clear or very light yellow urine</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q2" value="wrong" class="mr-3">
+                                    <span>🟡 Dark yellow urine</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q2" value="wrong" class="mr-3">
+                                    <span>🔴 Orange or brown urine</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="3">
+                            <p class="font-semibold mb-3">3. What percentage of your maximum heart rate should you maintain during moderate exercise?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q3" value="wrong" class="mr-3">
+                                    <span>40-50%</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q3" value="correct" class="mr-3">
+                                    <span>50-70%</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q3" value="wrong" class="mr-3">
+                                    <span>80-90%</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="4">
+                            <p class="font-semibold mb-3">4. How many hours of sleep do athletes typically need for optimal performance?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q4" value="wrong" class="mr-3">
+                                    <span>6-7 hours</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q4" value="correct" class="mr-3">
+                                    <span>8-10 hours</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q4" value="wrong" class="mr-3">
+                                    <span>5-6 hours</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 5 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="5">
+                            <p class="font-semibold mb-3">5. What is the recommended protein intake per kg of body weight for athletes?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q5" value="wrong" class="mr-3">
+                                    <span>0.5-0.8g per kg</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q5" value="correct" class="mr-3">
+                                    <span>1.2-2.0g per kg</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q5" value="wrong" class="mr-3">
+                                    <span>3.0-4.0g per kg</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 6 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="6">
+                            <p class="font-semibold mb-3">6. When should you consume carbohydrates for optimal performance?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q6" value="wrong" class="mr-3">
+                                    <span>Only after exercise</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q6" value="correct" class="mr-3">
+                                    <span>Before, during, and after exercise</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q6" value="wrong" class="mr-3">
+                                    <span>Never during training</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 7 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="7">
+                            <p class="font-semibold mb-3">7. What is the RICE method used for?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q7" value="wrong" class="mr-3">
+                                    <span>Nutrition planning</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q7" value="correct" class="mr-3">
+                                    <span>Injury treatment (Rest, Ice, Compression, Elevation)</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q7" value="wrong" class="mr-3">
+                                    <span>Training schedule</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 8 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="8">
+                            <p class="font-semibold mb-3">8. How often should you replace your athletic shoes?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q8" value="wrong" class="mr-3">
+                                    <span>Every 6 months regardless of use</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q8" value="correct" class="mr-3">
+                                    <span>Every 300-500 miles or when worn out</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q8" value="wrong" class="mr-3">
+                                    <span>Only when they break</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 9 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="9">
+                            <p class="font-semibold mb-3">9. What is the best time to stretch for injury prevention?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q9" value="wrong" class="mr-3">
+                                    <span>Only before exercise</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q9" value="correct" class="mr-3">
+                                    <span>After warming up and after exercise</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q9" value="wrong" class="mr-3">
+                                    <span>Stretching is not necessary</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 10 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="10">
+                            <p class="font-semibold mb-3">10. What does BMI stand for and what's a healthy range for athletes?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q10" value="correct" class="mr-3">
+                                    <span>Body Mass Index; 18.5-24.9 (varies by sport)</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q10" value="wrong" class="mr-3">
+                                    <span>Basic Metabolic Index; 15-20</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q10" value="wrong" class="mr-3">
+                                    <span>Body Muscle Index; 25-30</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 11 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="11">
+                            <p class="font-semibold mb-3">11. How much water should an athlete drink per hour during intense exercise?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q11" value="wrong" class="mr-3">
+                                    <span>100-200ml</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q11" value="correct" class="mr-3">
+                                    <span>500-1000ml</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q11" value="wrong" class="mr-3">
+                                    <span>2000ml+</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 12 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="12">
+                            <p class="font-semibold mb-3">12. What is the principle of progressive overload in training?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q12" value="wrong" class="mr-3">
+                                    <span>Always train at maximum intensity</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q12" value="correct" class="mr-3">
+                                    <span>Gradually increase training demands over time</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q12" value="wrong" class="mr-3">
+                                    <span>Keep training intensity constant</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 13 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="13">
+                            <p class="font-semibold mb-3">13. What is the recommended warm-up duration before intense exercise?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q13" value="wrong" class="mr-3">
+                                    <span>2-5 minutes</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q13" value="correct" class="mr-3">
+                                    <span>10-15 minutes</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q13" value="wrong" class="mr-3">
+                                    <span>30+ minutes</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 14 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="14">
+                            <p class="font-semibold mb-3">14. Which type of training improves cardiovascular endurance?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q14" value="wrong" class="mr-3">
+                                    <span>Only high-intensity interval training</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q14" value="correct" class="mr-3">
+                                    <span>Aerobic exercise and sustained activities</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q14" value="wrong" class="mr-3">
+                                    <span>Only weightlifting</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 15 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="15">
+                            <p class="font-semibold mb-3">15. What is the ideal body fat percentage range for male athletes?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q15" value="wrong" class="mr-3">
+                                    <span>15-20%</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q15" value="correct" class="mr-3">
+                                    <span>6-13%</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q15" value="wrong" class="mr-3">
+                                    <span>20-25%</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 16 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="16">
+                            <p class="font-semibold mb-3">16. How should you breathe during strength training exercises?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q16" value="wrong" class="mr-3">
+                                    <span>Hold your breath throughout</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q16" value="correct" class="mr-3">
+                                    <span>Exhale during exertion, inhale during relaxation</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q16" value="wrong" class="mr-3">
+                                    <span>Breathe rapidly throughout</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 17 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="17">
+                            <p class="font-semibold mb-3">17. What is the recommended frequency for strength training per week?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q17" value="wrong" class="mr-3">
+                                    <span>Once per week</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q17" value="correct" class="mr-3">
+                                    <span>2-3 times per week</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q17" value="wrong" class="mr-3">
+                                    <span>Every day</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 18 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="18">
+                            <p class="font-semibold mb-3">18. Which nutrient is most important immediately after endurance exercise?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q18" value="wrong" class="mr-3">
+                                    <span>Fats only</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q18" value="correct" class="mr-3">
+                                    <span>Carbohydrates and protein combination</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q18" value="wrong" class="mr-3">
+                                    <span>Vitamins only</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 19 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="19">
+                            <p class="font-semibold mb-3">19. What is the primary benefit of cross-training?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q19" value="wrong" class="mr-3">
+                                    <span>It's easier than regular training</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q19" value="correct" class="mr-3">
+                                    <span>Reduces injury risk and improves overall fitness</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q19" value="wrong" class="mr-3">
+                                    <span>It replaces sport-specific training</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 20 -->
+                        <div class="question-card p-4 bg-gray-50 rounded-lg" data-question="20">
+                            <p class="font-semibold mb-3">20. What is the most important factor in preventing sports injuries?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q20" value="wrong" class="mr-3">
+                                    <span>Expensive equipment</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q20" value="correct" class="mr-3">
+                                    <span>Proper technique, conditioning, and gradual progression</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer hover:bg-white p-2 rounded">
+                                    <input type="radio" name="q20" value="wrong" class="mr-3">
+                                    <span>Training harder and longer</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                            <button onclick="submitQuiz()" class="flex-1 bg-accent text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors font-semibold">
+                                Submit Complete Assessment
+                            </button>
+                            <button onclick="resetQuiz()" class="flex-1 bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors font-semibold">
+                                Reset Quiz
+                            </button>
+                        </div>
+                        
+                        <div id="quizResults" class="hidden p-6 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border-2 border-blue-200">
+                            <h4 class="font-bold text-xl text-blue-800 mb-4 flex items-center">
+                                <span class="text-2xl mr-2">🏆</span>
+                                Assessment Results
+                            </h4>
+                            <div id="quizScore" class="space-y-4"></div>
+                            <div id="personalizedRecommendations" class="mt-6 p-4 bg-white rounded-lg">
+                                <h5 class="font-semibold text-green-800 mb-2">🎯 Personalized Recommendations</h5>
+                                <div id="recommendationsList" class="text-sm space-y-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Events Section -->
+        <div id="events" class="section hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h3 class="text-xl font-bold mb-6 flex items-center">
+                    <span class="text-2xl mr-2">📅</span>
+                    2025 Sports Calendar
+                </h3>
+                
+                <!-- Calendar Navigation -->
+                <div class="flex items-center justify-between mb-6">
+                    <button onclick="changeMonth(-1)" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg transition-colors">
+                        ← Previous
+                    </button>
+                    <h4 id="currentMonth" class="text-lg font-semibold">January 2025</h4>
+                    <button onclick="changeMonth(1)" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg transition-colors">
+                        Next →
+                    </button>
+                </div>
+
+                <!-- Mini Calendar -->
+                <div class="grid grid-cols-7 gap-2 mb-6">
+                    <div class="text-center font-semibold text-gray-600 py-2">Sun</div>
+                    <div class="text-center font-semibold text-gray-600 py-2">Mon</div>
+                    <div class="text-center font-semibold text-gray-600 py-2">Tue</div>
+                    <div class="text-center font-semibold text-gray-600 py-2">Wed</div>
+                    <div class="text-center font-semibold text-gray-600 py-2">Thu</div>
+                    <div class="text-center font-semibold text-gray-600 py-2">Fri</div>
+                    <div class="text-center font-semibold text-gray-600 py-2">Sat</div>
+                    
+                    <div id="calendarDays" class="col-span-7 grid grid-cols-7 gap-2"></div>
+                </div>
+            </div>
+
+            <!-- Events Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h4 class="text-lg font-bold mb-4 text-primary">🏃 Upcoming Events</h4>
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-primary pl-4">
+                            <p class="font-semibold">Regional Tennis Championship</p>
+                            <p class="text-sm text-gray-600">March 15, 2025 • 9:00 AM</p>
+                            <p class="text-sm text-gray-500">City Sports Complex</p>
+                        </div>
+                        <div class="border-l-4 border-secondary pl-4">
+                            <p class="font-semibold">Swimming Trials</p>
+                            <p class="text-sm text-gray-600">April 2, 2025 • 6:00 PM</p>
+                            <p class="text-sm text-gray-500">Aquatic Center</p>
+                        </div>
+                        <div class="border-l-4 border-accent pl-4">
+                            <p class="font-semibold">Athletics Meet</p>
+                            <p class="text-sm text-gray-600">May 10, 2025 • 8:00 AM</p>
+                            <p class="text-sm text-gray-500">National Stadium</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h4 class="text-lg font-bold mb-4 text-accent">🏆 Recent Achievements</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg">
+                            <div class="text-2xl">🥇</div>
+                            <div>
+                                <p class="font-semibold">First Place</p>
+                                <p class="text-sm text-gray-600">District Tennis Tournament</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                            <div class="text-2xl">🥈</div>
+                            <div>
+                                <p class="font-semibold">Second Place</p>
+                                <p class="text-sm text-gray-600">State Swimming Championship</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-orange-50 rounded-lg">
+                            <div class="text-2xl">🥉</div>
+                            <div>
+                                <p class="font-semibold">Third Place</p>
+                                <p class="text-sm text-gray-600">Regional Athletics Meet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="fixed inset-0 modal-overlay hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-screen overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Edit Athlete Profile</h3>
+                    <button onclick="closeEditModal()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <form id="editForm" onsubmit="updateAthlete(event)">
+                    <div id="editFormContent">
+                        <!-- Form content will be populated dynamically -->
+                    </div>
+                    <div class="flex justify-end space-x-4 mt-6">
+                        <button type="button" onclick="closeEditModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Update Athlete
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let athletes = [];
+        let currentEditingId = null;
+        let currentMonthIndex = 0;
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        // Sport-specific fields configuration
+        const sportSpecificFields = {
+            football: [
+                { name: 'preferredPosition', label: 'Preferred Position', type: 'select', options: ['Goalkeeper', 'Defender', 'Midfielder', 'Forward'] },
+                { name: 'kickingFoot', label: 'Preferred Foot', type: 'select', options: ['Right', 'Left', 'Both'] },
+                { name: 'sprintSpeed', label: 'Sprint Speed (100m time in seconds)', type: 'number', step: '0.1' }
+            ],
+            basketball: [
+                { name: 'position', label: 'Position', type: 'select', options: ['Point Guard', 'Shooting Guard', 'Small Forward', 'Power Forward', 'Center'] },
+                { name: 'verticalJump', label: 'Vertical Jump (cm)', type: 'number' },
+                { name: 'freeThrowPercentage', label: 'Free Throw Percentage', type: 'number', max: '100' }
+            ],
+            tennis: [
+                { name: 'playingHand', label: 'Playing Hand', type: 'select', options: ['Right', 'Left'] },
+                { name: 'backhandStyle', label: 'Backhand Style', type: 'select', options: ['One-handed', 'Two-handed'] },
+                { name: 'serveSpeed', label: 'Serve Speed (km/h)', type: 'number' }
+            ],
+            swimming: [
+                { name: 'preferredStroke', label: 'Preferred Stroke', type: 'select', options: ['Freestyle', 'Backstroke', 'Breaststroke', 'Butterfly'] },
+                { name: 'poolLength', label: 'Training Pool Length', type: 'select', options: ['25m', '50m'] },
+                { name: 'bestTime100m', label: 'Best 100m Time (seconds)', type: 'number', step: '0.01' }
+            ],
+            athletics: [
+                { name: 'specialty', label: 'Specialty', type: 'select', options: ['Sprints', 'Middle Distance', 'Long Distance', 'Hurdles', 'Jumps', 'Throws'] },
+                { name: 'personalBest', label: 'Personal Best', type: 'text', placeholder: 'e.g., 10.5s (100m)' },
+                { name: 'trainingType', label: 'Training Focus', type: 'select', options: ['Speed', 'Endurance', 'Strength', 'Technical'] }
+            ]
+        };
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAthletes();
+            updateDashboardStats();
+            generateCalendar();
+            showSection('dashboard');
+        });
+
+        // Navigation functions
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function showSection(sectionName) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.add('hidden'));
+            
+            document.getElementById(sectionName).classList.remove('hidden');
+            document.getElementById('mobileMenu').classList.add('hidden');
+            
+            if (sectionName === 'athletes') {
+                displayAthletes();
+            }
+        }
+
+        // Form handling functions
+        function updateSportSpecific(sport) {
+            const container = document.getElementById('sportSpecificFields');
+            const content = document.getElementById('sportSpecificContent');
+            
+            if (sport && sportSpecificFields[sport]) {
+                container.classList.remove('hidden');
+                content.innerHTML = '';
+                
+                sportSpecificFields[sport].forEach(field => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <label class="block text-sm font-medium text-gray-700 mb-2">${field.label}</label>
+                        ${field.type === 'select' ? 
+                            `<select name="${field.name}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="">Select ${field.label}</option>
+                                ${field.options.map(option => `<option value="${option.toLowerCase()}">${option}</option>`).join('')}
+                            </select>` :
+                            `<input type="${field.type}" name="${field.name}" ${field.step ? `step="${field.step}"` : ''} ${field.max ? `max="${field.max}"` : ''} ${field.placeholder ? `placeholder="${field.placeholder}"` : ''} class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">`
+                        }
+                    `;
+                    content.appendChild(div);
+                });
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        function handleRegistration(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const athlete = {
+                id: Date.now().toString(),
+                registrationDate: new Date().toISOString(),
+                fullName: formData.get('fullName'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                age: parseInt(formData.get('age')),
+                gender: formData.get('gender'),
+                dateOfBirth: formData.get('dateOfBirth'),
+                primarySport: formData.get('primarySport'),
+                experienceLevel: formData.get('experienceLevel'),
+                practiceHours: parseFloat(formData.get('practiceHours')) || 0,
+                height: parseInt(formData.get('height')),
+                weight: parseFloat(formData.get('weight')),
+                bloodPressure: formData.get('bloodPressure'),
+                breathingRate: parseInt(formData.get('breathingRate')) || 0,
+                maxPushups: parseInt(formData.get('maxPushups')) || 0,
+                hydrationLevel: formData.get('hydrationLevel'),
+                fitnessLevel: formData.get('fitnessLevel'),
+                goals: formData.get('goals'),
+                injuries: formData.get('injuries'),
+                aiScore: Math.floor(Math.random() * 30) + 70, // Random score between 70-100
+                lastAssessment: new Date().toISOString()
+            };
+
+            // Add sport-specific fields
+            const sport = formData.get('primarySport');
+            if (sport && sportSpecificFields[sport]) {
+                sportSpecificFields[sport].forEach(field => {
+                    const value = formData.get(field.name);
+                    if (value) {
+                        athlete[field.name] = field.type === 'number' ? parseFloat(value) : value;
+                    }
+                });
+            }
+
+            // Calculate BMI
+            if (athlete.height && athlete.weight) {
+                athlete.bmi = (athlete.weight / ((athlete.height/100) ** 2)).toFixed(1);
+            }
+
+            athletes.push(athlete);
+            saveAthletes();
+            updateDashboardStats();
+            
+            alert('🎉 Athlete registered successfully! Data saved to database.');
+            event.target.reset();
+            document.getElementById('sportSpecificFields').classList.add('hidden');
+            showSection('athletes');
+        }
+
+        function resetForm() {
+            document.getElementById('athleteForm').reset();
+            document.getElementById('sportSpecificFields').classList.add('hidden');
+        }
+
+        // Data management functions
+        function saveAthletes() {
+            try {
+                localStorage.setItem('sportsAthletes', JSON.stringify(athletes));
+            } catch (error) {
+                console.error('Error saving athletes:', error);
+                alert('Error saving data. Please try again.');
+            }
+        }
+
+        function loadAthletes() {
+            try {
+                const saved = localStorage.getItem('sportsAthletes');
+                if (saved) {
+                    athletes = JSON.parse(saved);
+                }
+            } catch (error) {
+                console.error('Error loading athletes:', error);
+                athletes = [];
+            }
+        }
+
+        function updateDashboardStats() {
+            document.getElementById('totalAthletes').textContent = athletes.length;
+            document.getElementById('totalAssessments').textContent = athletes.length;
+            
+            if (athletes.length > 0) {
+                const avgScore = athletes.reduce((sum, athlete) => sum + (athlete.aiScore || 0), 0) / athletes.length;
+                document.getElementById('avgScore').textContent = Math.round(avgScore);
+                
+                const uniqueSports = new Set(athletes.map(athlete => athlete.primarySport).filter(Boolean));
+                document.getElementById('activeSports').textContent = uniqueSports.size;
+                
+                displayRecentAthletes();
+            }
+        }
+
+        function displayRecentAthletes() {
+            const container = document.getElementById('recentAthletes');
+            const recent = athletes.slice(-3).reverse();
+            
+            if (recent.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <div class="text-4xl mb-2">📝</div>
+                        <p>No athletes registered yet. Start by adding new athletes!</p>
+                        <button onclick="showSection('registration')" class="mt-4 bg-primary text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            Add First Athlete
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = recent.map(athlete => `
+                <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                    <div class="text-2xl">${getSportEmoji(athlete.primarySport)}</div>
+                    <div class="flex-1">
+                        <p class="font-semibold">${athlete.fullName}</p>
+                        <p class="text-sm text-gray-600">${athlete.primarySport} • Age: ${athlete.age} • AI Score: ${athlete.aiScore || 'N/A'}</p>
+                    </div>
+                    <div class="text-accent font-semibold">${new Date(athlete.registrationDate).toLocaleDateString()}</div>
+                </div>
+            `).join('');
+        }
+
+        function displayAthletes() {
+            const grid = document.getElementById('athletesGrid');
+            const noAthletes = document.getElementById('noAthletes');
+            
+            if (athletes.length === 0) {
+                grid.classList.add('hidden');
+                noAthletes.classList.remove('hidden');
+                return;
+            }
+            
+            grid.classList.remove('hidden');
+            noAthletes.classList.add('hidden');
+            
+            grid.innerHTML = athletes.map(athlete => `
+                <div class="bg-white rounded-lg shadow-lg p-6 card-hover fade-in">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="text-3xl">${getSportEmoji(athlete.primarySport)}</div>
+                            <div>
+                                <h3 class="font-bold text-lg">${athlete.fullName}</h3>
+                                <p class="text-gray-600 text-sm">${athlete.primarySport} • ${athlete.experienceLevel}</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="editAthlete('${athlete.id}')" class="text-primary hover:text-blue-700">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="deleteAthlete('${athlete.id}')" class="text-danger hover:text-red-700">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">AI Score:</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="bg-gray-200 rounded-full h-2 w-20">
+                                    <div class="bg-primary h-2 rounded-full" style="width: ${athlete.aiScore || 0}%"></div>
+                                </div>
+                                <span class="font-semibold text-primary">${athlete.aiScore || 'N/A'}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <span class="text-gray-600">Age:</span>
+                                <span class="font-medium ml-1">${athlete.age}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">BMI:</span>
+                                <span class="font-medium ml-1">${athlete.bmi || 'N/A'}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">Practice:</span>
+                                <span class="font-medium ml-1">${athlete.practiceHours || 0}h/day</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">Fitness:</span>
+                                <span class="font-medium ml-1">${athlete.fitnessLevel || 'N/A'}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-2 border-t">
+                            <p class="text-xs text-gray-500">Registered: ${new Date(athlete.registrationDate).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterAthletes() {
+            const searchTerm = document.getElementById('searchAthletes').value.toLowerCase();
+            const filteredAthletes = athletes.filter(athlete => 
+                athlete.fullName.toLowerCase().includes(searchTerm) ||
+                athlete.primarySport.toLowerCase().includes(searchTerm) ||
+                athlete.experienceLevel.toLowerCase().includes(searchTerm)
+            );
+            
+            const grid = document.getElementById('athletesGrid');
+            const noAthletes = document.getElementById('noAthletes');
+            
+            if (filteredAthletes.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <div class="text-4xl mb-4">🔍</div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">No Results Found</h3>
+                        <p class="text-gray-500">Try adjusting your search terms</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Update the athletes array temporarily for display
+            const originalAthletes = [...athletes];
+            athletes = filteredAthletes;
+            displayAthletes();
+            athletes = originalAthletes;
+        }
+
+        function editAthlete(id) {
+            const athlete = athletes.find(a => a.id === id);
+            if (!athlete) return;
+            
+            currentEditingId = id;
+            
+            const formContent = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                        <input type="text" name="fullName" value="${athlete.fullName}" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" name="email" value="${athlete.email}" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Age</label>
+                        <input type="number" name="age" value="${athlete.age}" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Primary Sport</label>
+                        <select name="primarySport" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            <option value="football" ${athlete.primarySport === 'football' ? 'selected' : ''}>Football ⚽</option>
+                            <option value="basketball" ${athlete.primarySport === 'basketball' ? 'selected' : ''}>Basketball 🏀</option>
+                            <option value="tennis" ${athlete.primarySport === 'tennis' ? 'selected' : ''}>Tennis 🎾</option>
+                            <option value="swimming" ${athlete.primarySport === 'swimming' ? 'selected' : ''}>Swimming 🏊</option>
+                            <option value="athletics" ${athlete.primarySport === 'athletics' ? 'selected' : ''}>Athletics 🏃</option>
+                            <option value="cricket" ${athlete.primarySport === 'cricket' ? 'selected' : ''}>Cricket 🏏</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Height (cm)</label>
+                        <input type="number" name="height" value="${athlete.height}" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Weight (kg)</label>
+                        <input type="number" name="weight" value="${athlete.weight}" step="0.1" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Practice Hours/Day</label>
+                        <input type="number" name="practiceHours" value="${athlete.practiceHours || ''}" step="0.5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Fitness Level</label>
+                        <select name="fitnessLevel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            <option value="">Select Level</option>
+                            <option value="poor" ${athlete.fitnessLevel === 'poor' ? 'selected' : ''}>Poor</option>
+                            <option value="fair" ${athlete.fitnessLevel === 'fair' ? 'selected' : ''}>Fair</option>
+                            <option value="good" ${athlete.fitnessLevel === 'good' ? 'selected' : ''}>Good</option>
+                            <option value="excellent" ${athlete.fitnessLevel === 'excellent' ? 'selected' : ''}>Excellent</option>
+                            <option value="elite" ${athlete.fitnessLevel === 'elite' ? 'selected' : ''}>Elite</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Goals & Aspirations</label>
+                    <textarea name="goals" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">${athlete.goals || ''}</textarea>
+                </div>
+            `;
+            
+            document.getElementById('editFormContent').innerHTML = formContent;
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        function updateAthlete(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const athleteIndex = athletes.findIndex(a => a.id === currentEditingId);
+            
+            if (athleteIndex === -1) return;
+            
+            // Update athlete data
+            athletes[athleteIndex] = {
+                ...athletes[athleteIndex],
+                fullName: formData.get('fullName'),
+                email: formData.get('email'),
+                age: parseInt(formData.get('age')),
+                primarySport: formData.get('primarySport'),
+                height: parseInt(formData.get('height')),
+                weight: parseFloat(formData.get('weight')),
+                practiceHours: parseFloat(formData.get('practiceHours')) || 0,
+                fitnessLevel: formData.get('fitnessLevel'),
+                goals: formData.get('goals'),
+                lastUpdated: new Date().toISOString()
+            };
+            
+            // Recalculate BMI
+            if (athletes[athleteIndex].height && athletes[athleteIndex].weight) {
+                athletes[athleteIndex].bmi = (athletes[athleteIndex].weight / ((athletes[athleteIndex].height/100) ** 2)).toFixed(1);
+            }
+            
+            saveAthletes();
+            updateDashboardStats();
+            displayAthletes();
+            closeEditModal();
+            
+            alert('✅ Athlete profile updated successfully!');
+        }
+
+        function deleteAthlete(id) {
+            if (confirm('Are you sure you want to delete this athlete? This action cannot be undone.')) {
+                athletes = athletes.filter(a => a.id !== id);
+                saveAthletes();
+                updateDashboardStats();
+                displayAthletes();
+                alert('🗑️ Athlete deleted successfully.');
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+            currentEditingId = null;
+        }
+
+        // Assessment functions
+        function handleVideoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Simulate AI analysis
+                setTimeout(() => {
+                    const scores = {
+                        technique: Math.floor(Math.random() * 20) + 80,
+                        posture: ['Excellent', 'Good', 'Fair'][Math.floor(Math.random() * 3)],
+                        movement: ['Excellent', 'Good', 'Needs Improvement'][Math.floor(Math.random() * 3)],
+                        potential: ['High', 'Medium-High', 'Medium'][Math.floor(Math.random() * 3)]
+                    };
+                    
+                    document.getElementById('techniqueScore').textContent = `${scores.technique}/100`;
+                    document.getElementById('postureAnalysis').textContent = scores.posture;
+                    document.getElementById('movementEfficiency').textContent = scores.movement;
+                    document.getElementById('potentialRating').textContent = scores.potential;
+                    
+                    const recommendations = [
+                        '• Focus on follow-through technique',
+                        '• Improve footwork positioning',
+                        '• Increase core stability exercises',
+                        '• Work on timing and rhythm',
+                        '• Enhance flexibility training'
+                    ];
+                    
+                    document.getElementById('aiRecommendations').innerHTML = recommendations.slice(0, 3).join('<br>');
+                    document.getElementById('videoAnalysisResults').classList.remove('hidden');
+                    
+                    alert('🎥 Video analysis complete! Check the results below.');
+                }, 3000);
+            }
+        }
+
+        function submitQuiz() {
+            const totalQuestions = 20;
+            let answeredQuestions = 0;
+            let correctAnswers = 0;
+            let feedback = [];
+            
+            // Check all questions
+            for (let i = 1; i <= totalQuestions; i++) {
+                const answer = document.querySelector(`input[name="q${i}"]:checked`);
+                if (answer) {
+                    answeredQuestions++;
+                    if (answer.value === 'correct') {
+                        correctAnswers++;
+                    }
+                }
+            }
+            
+            if (answeredQuestions < totalQuestions) {
+                alert(`Please answer all questions before submitting! You've answered ${answeredQuestions}/${totalQuestions} questions.`);
+                return;
+            }
+            
+            const score = Math.round((correctAnswers / totalQuestions) * 100);
+            
+            // Generate detailed feedback
+            const feedbackMessages = [
+                { correct: '✅ Recovery: 24-48 hours allows proper muscle repair and adaptation.', wrong: '❌ Recovery: 24-48 hours is optimal for muscle repair between intense sessions.' },
+                { correct: '✅ Hydration: Clear urine indicates excellent hydration status.', wrong: '❌ Hydration: Clear or light yellow urine shows optimal fluid levels.' },
+                { correct: '✅ Heart Rate: 50-70% is the moderate intensity training zone.', wrong: '❌ Heart Rate: 50-70% of max HR is ideal for moderate exercise.' },
+                { correct: '✅ Sleep: Athletes need 8-10 hours for optimal recovery and performance.', wrong: '❌ Sleep: Athletes require 8-10 hours for proper recovery.' },
+                { correct: '✅ Protein: 1.2-2.0g per kg supports muscle repair and growth.', wrong: '❌ Protein: Athletes need 1.2-2.0g per kg body weight daily.' },
+                { correct: '✅ Carbs: Fuel before, during, and after exercise for best results.', wrong: '❌ Carbs: Should be consumed before, during, and after exercise.' },
+                { correct: '✅ RICE: Rest, Ice, Compression, Elevation for acute injuries.', wrong: '❌ RICE: Rest, Ice, Compression, Elevation treats acute injuries.' },
+                { correct: '✅ Shoes: Replace every 300-500 miles to prevent injury.', wrong: '❌ Shoes: Replace every 300-500 miles or when worn out.' },
+                { correct: '✅ Stretching: Best after warm-up and post-exercise.', wrong: '❌ Stretching: Most effective after warming up and after exercise.' },
+                { correct: '✅ BMI: Body Mass Index; 18.5-24.9 is generally healthy.', wrong: '❌ BMI: Body Mass Index; healthy range varies by sport and build.' },
+                { correct: '✅ Hydration: 500-1000ml per hour during intense exercise.', wrong: '❌ Hydration: Athletes need 500-1000ml per hour during exercise.' },
+                { correct: '✅ Progressive Overload: Gradually increase training demands.', wrong: '❌ Progressive Overload: Gradually increase training intensity/volume.' },
+                { correct: '✅ Warm-up: 10-15 minutes prepares body for intense activity.', wrong: '❌ Warm-up: 10-15 minutes is recommended before intense exercise.' },
+                { correct: '✅ Cardio: Aerobic exercise builds cardiovascular endurance.', wrong: '❌ Cardio: Aerobic and sustained activities improve heart health.' },
+                { correct: '✅ Body Fat: 6-13% is typical for male athletes.', wrong: '❌ Body Fat: Male athletes typically maintain 6-13% body fat.' },
+                { correct: '✅ Breathing: Exhale on exertion, inhale on relaxation.', wrong: '❌ Breathing: Exhale during effort, inhale during relaxation phase.' },
+                { correct: '✅ Strength Training: 2-3 times per week is optimal.', wrong: '❌ Strength Training: 2-3 sessions per week allows proper recovery.' },
+                { correct: '✅ Post-Exercise: Carbs and protein aid recovery.', wrong: '❌ Post-Exercise: Carbohydrate-protein combo optimizes recovery.' },
+                { correct: '✅ Cross-Training: Reduces injury risk and improves fitness.', wrong: '❌ Cross-Training: Prevents overuse injuries and builds overall fitness.' },
+                { correct: '✅ Injury Prevention: Proper technique and gradual progression.', wrong: '❌ Injury Prevention: Good technique, conditioning, and progression are key.' }
+            ];
+            
+            for (let i = 1; i <= totalQuestions; i++) {
+                const answer = document.querySelector(`input[name="q${i}"]:checked`);
+                if (answer) {
+                    if (answer.value === 'correct') {
+                        feedback.push(feedbackMessages[i-1].correct);
+                    } else {
+                        feedback.push(feedbackMessages[i-1].wrong);
+                    }
+                }
+            }
+            
+            // Performance level assessment
+            let performanceLevel, levelColor, recommendations;
+            if (score >= 90) {
+                performanceLevel = 'Elite Sports Knowledge';
+                levelColor = 'text-green-600';
+                recommendations = [
+                    '🏆 Exceptional understanding of sports science',
+                    '📚 Consider mentoring other athletes',
+                    '🎯 Focus on sport-specific advanced techniques',
+                    '💡 Stay updated with latest research'
+                ];
+            } else if (score >= 80) {
+                performanceLevel = 'Advanced Understanding';
+                levelColor = 'text-blue-600';
+                recommendations = [
+                    '💪 Strong foundation in sports principles',
+                    '📖 Review areas where you scored lower',
+                    '🏃 Apply knowledge consistently in training',
+                    '🔬 Explore advanced sports science topics'
+                ];
+            } else if (score >= 70) {
+                performanceLevel = 'Good Knowledge Base';
+                levelColor = 'text-yellow-600';
+                recommendations = [
+                    '📚 Study nutrition and recovery principles',
+                    '⏰ Focus on training periodization',
+                    '🩺 Learn more about injury prevention',
+                    '💧 Master hydration strategies'
+                ];
+            } else if (score >= 60) {
+                performanceLevel = 'Developing Understanding';
+                levelColor = 'text-orange-600';
+                recommendations = [
+                    '📖 Review basic sports science principles',
+                    '🏥 Study injury prevention methods',
+                    '🥗 Learn about sports nutrition',
+                    '😴 Understand importance of recovery'
+                ];
+            } else {
+                performanceLevel = 'Needs Improvement';
+                levelColor = 'text-red-600';
+                recommendations = [
+                    '📚 Start with basic sports science education',
+                    '👨‍⚕️ Consult with sports professionals',
+                    '🎓 Take a sports nutrition course',
+                    '📱 Use sports education apps and resources'
+                ];
+            }
+            
+            // Update progress bar to 100%
+            document.getElementById('progressBar').style.width = '100%';
+            document.getElementById('quizProgress').textContent = `${totalQuestions}/${totalQuestions}`;
+            
+            // Display results
+            document.getElementById('quizScore').innerHTML = `
+                <div class="text-center mb-6">
+                    <div class="text-4xl font-bold ${levelColor} mb-2">${score}/100</div>
+                    <div class="text-lg font-semibold ${levelColor}">${performanceLevel}</div>
+                    <div class="text-sm text-gray-600 mt-2">Correct Answers: ${correctAnswers}/${totalQuestions}</div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-green-100 p-4 rounded-lg text-center">
+                        <div class="text-2xl font-bold text-green-600">${correctAnswers}</div>
+                        <div class="text-sm text-green-700">Correct</div>
+                    </div>
+                    <div class="bg-red-100 p-4 rounded-lg text-center">
+                        <div class="text-2xl font-bold text-red-600">${totalQuestions - correctAnswers}</div>
+                        <div class="text-sm text-red-700">Incorrect</div>
+                    </div>
+                    <div class="bg-blue-100 p-4 rounded-lg text-center">
+                        <div class="text-2xl font-bold text-blue-600">${score}%</div>
+                        <div class="text-sm text-blue-700">Score</div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-lg max-h-60 overflow-y-auto">
+                    <h5 class="font-semibold mb-3">📝 Detailed Feedback</h5>
+                    <div class="space-y-1 text-sm">
+                        ${feedback.slice(0, 10).join('<br>')}
+                        ${feedback.length > 10 ? `<br><em class="text-gray-500">... and ${feedback.length - 10} more items</em>` : ''}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('recommendationsList').innerHTML = recommendations.map(rec => 
+                `<div class="flex items-start space-x-2">
+                    <span class="text-green-500 mt-1">•</span>
+                    <span>${rec}</span>
+                </div>`
+            ).join('');
+            
+            document.getElementById('quizResults').classList.remove('hidden');
+            
+            // Save quiz results to athlete profile if available
+            const currentAthlete = getCurrentAthlete();
+            if (currentAthlete) {
+                currentAthlete.quizScore = score;
+                currentAthlete.quizDate = new Date().toISOString();
+                currentAthlete.knowledgeLevel = performanceLevel;
+                saveAthletes();
+            }
+            
+            // Scroll to results
+            document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetQuiz() {
+            // Clear all radio buttons
+            for (let i = 1; i <= 20; i++) {
+                const radios = document.querySelectorAll(`input[name="q${i}"]`);
+                radios.forEach(radio => radio.checked = false);
+            }
+            
+            // Reset progress
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('quizProgress').textContent = '0/20';
+            
+            // Hide results
+            document.getElementById('quizResults').classList.add('hidden');
+            
+            // Scroll to top of quiz
+            document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getCurrentAthlete() {
+            // This would typically get the currently logged-in athlete
+            // For demo purposes, we'll return the most recent athlete
+            return athletes.length > 0 ? athletes[athletes.length - 1] : null;
+        }
+
+        // Add progress tracking for quiz
+        document.addEventListener('change', function(event) {
+            if (event.target.type === 'radio' && event.target.name.startsWith('q')) {
+                updateQuizProgress();
+            }
+        });
+
+        function updateQuizProgress() {
+            let answeredQuestions = 0;
+            for (let i = 1; i <= 20; i++) {
+                const answer = document.querySelector(`input[name="q${i}"]:checked`);
+                if (answer) {
+                    answeredQuestions++;
+                }
+            }
+            
+            const progress = (answeredQuestions / 20) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            document.getElementById('quizProgress').textContent = `${answeredQuestions}/20`;
+        }
+
+        // Calendar functions
+        function changeMonth(direction) {
+            currentMonthIndex += direction;
+            if (currentMonthIndex < 0) currentMonthIndex = 11;
+            if (currentMonthIndex > 11) currentMonthIndex = 0;
+            
+            document.getElementById('currentMonth').textContent = `${months[currentMonthIndex]} 2025`;
+            generateCalendar();
+        }
+
+        function generateCalendar() {
+            const calendarDays = document.getElementById('calendarDays');
+            calendarDays.innerHTML = '';
+            
+            const year = 2025;
+            const month = currentMonthIndex;
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            // Add empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'p-2';
+                calendarDays.appendChild(emptyDay);
+            }
+            
+            // Add days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'p-2 text-center hover:bg-blue-100 rounded cursor-pointer transition-colors';
+                dayElement.textContent = day;
+                
+                // Highlight special event dates
+                if ((month === 2 && day === 15) || (month === 3 && day === 2) || (month === 4 && day === 10)) {
+                    dayElement.className += ' bg-primary text-white font-bold';
+                    dayElement.title = 'Event Day';
+                }
+                
+                calendarDays.appendChild(dayElement);
+            }
+        }
+
+        // Utility functions
+        function getSportEmoji(sport) {
+            const emojis = {
+                football: '⚽',
+                basketball: '🏀',
+                tennis: '🎾',
+                swimming: '🏊',
+                athletics: '🏃',
+                cricket: '🏏',
+                badminton: '🏸',
+                volleyball: '🏐'
+            };
+            return emojis[sport] || '🏃';
+        }
+
+        // Auto-save functionality
+        setInterval(() => {
+            if (athletes.length > 0) {
+                saveAthletes();
+            }
+        }, 30000); // Auto-save every 30 seconds
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9830b41177a2be0a',t:'MTc1ODUzMjU4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
